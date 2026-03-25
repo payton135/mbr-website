@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邁克兄弟科技 MBR｜智慧自動化轉型決策平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; scroll-behavior: smooth; }
+        .chart-container { position: relative; width: 100%; max-width: 650px; margin: 0 auto; height: 350px; }
+        .tab-active { border-color: #f59e0b; color: #d97706; background-color: rgba(254, 243, 199, 0.5); }
+        .tab-inactive { border-color: transparent; color: #64748b; }
+        .tab-inactive:hover { color: #1e293b; }
+        .card-shadow { box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05); }
+        .spec-row:nth-child(even) { background-color: #f1f5f9; }
+        .spec-row:hover { background-color: #fef3c7; transition: background-color 0.3s; }
+        .video-wrapper { max-width: 1000px; margin: 0 auto 40px auto; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 1.5rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        .loading-dots:after { content: '.'; animation: dots 1.5s steps(5, end) infinite; }
+        @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60% { content: '...'; } 80%, 100% { content: ''; } }
+        .case-img { width: 100%; height: 220px; object-fit: cover; border-bottom: 4px solid #f59e0b; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+
+    <nav class="bg-slate-900 text-white sticky top-0 z-50 shadow-xl">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center h-16">
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl">🤖</span>
+                <div class="text-lg font-black tracking-tighter uppercase">
+                    邁克兄弟科技 <span class="text-amber-500">MBR</span>
+                </div>
+            </div>
+            <div class="hidden md:flex space-x-8 text-xs font-bold uppercase tracking-widest">
+                <a href="#dashboard" class="hover:text-amber-500 transition-colors">場景剖析</a>
+                <a href="#cases" class="hover:text-amber-500 transition-colors">實績案例</a>
+                <a href="#video-demo" class="hover:text-amber-500 transition-colors">實機演示</a>
+                <a href="#specs" class="hover:text-amber-500 transition-colors">技術參數</a>
+                <a href="#ai-consultant" class="text-amber-500">✨ AI 診斷</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="bg-white py-24 px-6 border-b border-slate-100 text-center">
+        <div class="max-w-5xl mx-auto">
+            <h1 class="text-5xl md:text-6xl font-black text-slate-900 mb-8 leading-tight">
+                應對缺工海嘯：<br><span class="text-amber-600">高效且低工傷風險</span> 的自動化對策
+            </h1>
+            <p class="text-xl text-slate-600 leading-relaxed max-w-3xl mx-auto mb-12">
+                針對農業採收、流通配送、零售百貨及醫療物流需求，結合 Gemini AI 實時生成專屬轉型報告，將搬運重擔轉化為數位競爭力。
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#cases" class="bg-amber-500 text-white px-8 py-4 rounded-full font-black shadow-lg hover:scale-105 transition-transform">
+                    查看產業實地案例
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <section id="dashboard" class="py-20 px-4 md:px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-12 text-center">
+                <h2 class="text-3xl font-black text-slate-900 mb-4 tracking-tighter">四大核心產業搬運壓力數據中心</h2>
+                <div class="flex flex-wrap justify-center gap-2 mt-8 mb-12 border-b border-slate-200">
+                    <button onclick="updateDashboard('agriculture')" id="btn-agriculture" class="px-6 py-2 border-b-4 font-bold transition-all text-sm tab-active">🌾 農業採收</button>
+                    <button onclick="updateDashboard('logistics')" id="btn-logistics" class="px-6 py-2 border-b-4 font-bold transition-all text-sm tab-inactive">🚚 流通配送</button>
+                    <button onclick="updateDashboard('retail')" id="btn-retail" class="px-6 py-2 border-b-4 font-bold transition-all text-sm tab-inactive">🛍️ 零售百貨</button>
+                    <button onclick="updateDashboard('medical')" id="btn-medical" class="px-6 py-2 border-b-4 font-bold transition-all text-sm tab-inactive">🏥 醫療物流</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                <div class="bg-white p-10 rounded-3xl card-shadow border border-slate-100">
+                    <h3 class="text-xl font-black mb-8 flex items-center text-slate-900 uppercase">
+                        <span class="bg-amber-100 text-amber-700 w-10 h-10 rounded-xl flex items-center justify-center mr-4 text-lg">📊</span>
+                        搬運困境權重分析
+                    </h3>
+                    <div class="chart-container">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="space-y-8">
+                    <div class="bg-white p-10 rounded-3xl card-shadow border border-slate-100 min-h-[300px]">
+                        <h2 class="text-3xl font-black text-slate-900 mb-8" id="content-title">載入中...</h2>
+                        <div class="space-y-6" id="pain-points-list"></div>
+                    </div>
+                    <div class="bg-slate-900 p-10 rounded-3xl text-white shadow-2xl relative overflow-hidden">
+                        <h3 class="text-xl font-bold mb-4 flex items-center text-amber-500">
+                            🚀 MBR 自動化解決策略
+                        </h3>
+                        <p class="text-slate-300 text-lg leading-relaxed" id="solution-text"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="cases" class="py-24 bg-slate-50">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-4xl font-black text-slate-900 mb-4 tracking-tighter text-center">產業實地實證案例</h2>
+            <p class="text-slate-500 text-lg max-w-2xl mx-auto mb-16 text-center">MBR 解決方案專注於真實場域中的挑戰，實現高效且低工傷風險的營運目標。</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="bg-white rounded-2xl overflow-hidden card-shadow border border-slate-100 hover:-translate-y-2 transition-all">
+                    <img src="https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&q=80&w=600" alt="農業" class="case-img">
+                    <div class="p-6">
+                        <div class="text-xs font-bold text-emerald-600 uppercase mb-2">農業採收</div>
+                        <h3 class="text-xl font-black text-slate-900 mb-3">溫室採收輔助</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">MBR 人機跟隨功能，農友專注採收，機器人自動運載。有效減少 60% 體力負荷。</p>
+                        <span class="text-[10px] px-2 py-1 bg-emerald-50 text-emerald-600 rounded-full font-black">#減輕搬運 #降低工傷</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl overflow-hidden card-shadow border border-slate-100 hover:-translate-y-2 transition-all">
+                    <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=600" alt="流通" class="case-img">
+                    <div class="p-6">
+                        <div class="text-xs font-bold text-blue-600 uppercase mb-2">流通配送</div>
+                        <h3 class="text-xl font-black text-slate-900 mb-3">倉儲中心配送</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">搭載「循線導航」。自動往返入庫區。支持 300kg 籠車，減少每日 10km 步行。</p>
+                        <span class="text-[10px] px-2 py-1 bg-blue-50 text-blue-600 rounded-full font-black">#物流動線 #高效搬運</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl overflow-hidden card-shadow border border-slate-100 hover:-translate-y-2 transition-all">
+                    <img src="case3.png" alt="零售" class="case-img">
+                    <div class="p-6">
+                        <div class="text-xs font-bold text-amber-600 uppercase mb-2">零售百貨</div>
+                        <h3 class="text-xl font-black text-slate-900 mb-3">西新宿便當販售</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">Furiuri 計畫實績。木質外殼與 LED 看板，新宿街頭自動跟隨巡迴。</p>
+                        <span class="text-[10px] px-2 py-1 bg-amber-50 text-amber-600 rounded-full font-black">#品牌形象 #自動跟隨</span>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl overflow-hidden card-shadow border border-slate-100 hover:-translate-y-2 transition-all">
+                    <img src="case4.webp" alt="醫療" class="case-img">
+                    <div class="p-6">
+                        <div class="text-xs font-bold text-red-600 uppercase mb-2">醫療物流</div>
+                        <h3 class="text-xl font-black text-slate-900 mb-3">院內物資感控配送</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">支援無障礙坡道，實現零接觸運送，大幅提升院內感控等級。</p>
+                        <span class="text-[10px] px-2 py-1 bg-red-50 text-red-600 rounded-full font-black">#感控配送 #坡道支援</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="video-demo" class="py-24 bg-white text-center">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-4xl font-black text-slate-900 mb-16 tracking-tighter">✨ 實機演示：MBR 全場域實測影片</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="video-wrapper">
+                    <p class="mb-4 font-bold text-slate-700">【日本西新宿】行動零售便當車實測</p>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/nQMNGaOUcw4" title="MBR Retail Demo" allowfullscreen></iframe>
+                    </div>
+                </div>
+                <div class="video-wrapper">
+                    <p class="mb-4 font-bold text-slate-700">【實地運作】MBR 自動循環演示</p>
+                    <div class="video-container">
+                        <iframe src="https://www.youtube.com/embed/KGZp4wEuyWo" title="MBR Auto Move Demo" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="specs" class="py-24 bg-slate-50 border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-6">
+            <h2 class="text-4xl font-black text-slate-900 mb-12 text-center flex items-center justify-center">
+                <span class="mr-3 text-amber-500">⚙️</span> MBR 產品核心技術規格
+            </h2>
+            <div class="rounded-3xl overflow-hidden border border-slate-300 shadow-2xl bg-white">
+                <div class="grid grid-cols-2 p-6 bg-slate-900 text-amber-400 font-black uppercase tracking-widest text-sm">
+                    <div class="text-center border-r border-slate-700">規格項目 Specification</div>
+                    <div class="text-center">詳細參數 Details</div>
+                </div>
+                <div class="grid grid-cols-2 p-6 spec-row border-b border-slate-200">
+                    <div class="font-bold text-slate-900 text-center">載重能力 (Payload)</div>
+                    <div class="text-amber-600 font-black text-2xl text-center">120kg ~ 300kg</div>
+                </div>
+                <div class="grid grid-cols-2 p-6 spec-row border-b border-slate-200">
+                    <div class="font-bold text-slate-900 text-center">操作模式 (Modes)</div>
+                    <div class="text-slate-700 text-center">人機跟隨 / 路徑記憶 / <span class="text-slate-900 font-black">循線導航</span></div>
+                </div>
+                <div class="grid grid-cols-2 p-6 spec-row">
+                    <div class="font-bold text-slate-900 text-center">續航里程 (Battery)</div>
+                    <div class="text-slate-800 font-black text-2xl text-center">滿載可行走 20 公里</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="roi" class="py-24 bg-slate-900 text-white text-center">
+        <div class="max-w-7xl mx-auto px-6">
+            <h2 class="text-4xl font-black mb-16 tracking-tighter">輕鬆升級：政策紅利與長期利潤</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+                <div class="p-12 bg-white/5 border border-white/10 rounded-[2rem]">
+                    <div class="text-amber-500 text-5xl font-black mb-4">400 萬</div>
+                    <p class="text-slate-400 text-xs font-bold uppercase">政府補助最高額度</p>
+                </div>
+                <div class="p-12 bg-white/5 border border-white/10 rounded-[2rem]">
+                    <div class="text-emerald-400 text-5xl font-black mb-4">1.5 人</div>
+                    <p class="text-slate-400 text-xs font-bold uppercase">單機釋放體力勞動產能</p>
+                </div>
+                <div class="p-12 bg-white/5 border border-white/10 rounded-[2rem]">
+                    <div class="text-sky-400 text-5xl font-black mb-4">12 個月</div>
+                    <p class="text-slate-400 text-xs font-bold uppercase">硬體投資回本週期</p>
+                </div>
+            </div>
+            <div class="bg-white/5 p-10 rounded-3xl">
+                <canvas id="lineChart" style="height: 300px;"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-white py-16 border-t border-slate-200 text-center">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-2xl font-black text-slate-900 mb-6 uppercase">邁克兄弟科技 <span class="text-amber-600">MBR</span></div>
+            <p class="text-slate-400 text-[10px] mt-12">© 2026 Mike Brothers Tech MBR. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        let radarChart;
+        const industryData = {
+            agriculture: {
+                title: "農業採收：重載體力極限與勞動力斷層",
+                painPoints: [
+                    { title: "採收搬運重擔", desc: "溫室高溫下搬運數十公斤果菜籃，是農村人力流失的核心原因。" },
+                    { title: "長期腰背職災", desc: "重複性的彎腰、負重行走導致高額的職災成本。" }
+                ],
+                solution: "MBR 提供「人機跟隨」模式，讓農友專注採收，減少 60% 體力耗損。",
+                radar: [98, 90, 85, 80, 85]
+            },
+            logistics: {
+                title: "流通配送：效率黑洞與無效行走",
+                painPoints: [
+                    { title: "長距離步行疲勞", desc: "倉儲人員每日行走超 10km，導致準確率下降。" },
+                    { title: "沈重籠車風險", desc: "手推 300kg 籠車具高工傷風險，限制產能。" }
+                ],
+                solution: "利用「循線導航」，提升物流產能 40% 以上。",
+                radar: [85, 98, 80, 70, 95]
+            },
+            retail: {
+                title: "零售百貨：智慧導覽與高效補貨",
+                painPoints: [
+                    { title: "補貨勞動強度", desc: "深夜或清晨需搬運大宗物資進櫃。" },
+                    { title: "展示形象升級", desc: "傳統推車無法體現品牌科技感。" }
+                ],
+                solution: "提供客製外殼與廣告牆，打造未來商圈新樣貌。",
+                radar: [65, 55, 78, 92, 75]
+            },
+            medical: {
+                title: "醫療物流：零接觸感控與精準配送",
+                painPoints: [
+                    { title: "交叉感染風險", desc: "人員頻繁穿梭感控區配送存在感染風險。" },
+                    { title: "跨層坡道通行", desc: "院內常見無障礙坡道，需具備穩定爬坡能力。" }
+                ],
+                solution: "支援坡道通行，提升感控等級並節省 30% 人力。",
+                radar: [88, 75, 82, 88, 85]
+            }
+        };
+
+        function updateDashboard(industry) {
+            const data = industryData[industry];
+            document.getElementById('content-title').innerText = data.title;
+            document.getElementById('solution-text').innerText = data.solution;
+            document.querySelectorAll('button[id^="btn-"]').forEach(btn => btn.className = "px-6 py-2 border-b-4 font-bold transition-all text-sm tab-inactive");
+            document.getElementById(`btn-${industry}`).className = "px-6 py-2 border-b-4 font-bold transition-all text-sm tab-active";
+            const list = document.getElementById('pain-points-list');
+            list.innerHTML = data.painPoints.map(pt => `
+                <div class="p-6 bg-slate-50 border-l-4 border-amber-500 rounded-2xl hover:translate-x-2 transition-transform">
+                    <h4 class="font-black text-slate-900 text-lg mb-2">${pt.title}</h4>
+                    <p class="text-slate-600 text-sm">${pt.desc}</p>
+                </div>
+            `).join('');
+            radarChart.data.datasets[0].data = data.radar;
+            radarChart.update();
+        }
+
+        async function generateDiagnosis() {
+            const userInput = document.getElementById('ai-input').value.trim();
+            if (!userInput) return alert("請描述您的營運場景。");
+            const btn = document.getElementById('ai-btn');
+            const loading = document.getElementById('ai-loading');
+            const outputContainer = document.getElementById('ai-result-container');
+            const output = document.getElementById('ai-output');
+            btn.disabled = true; loading.classList.remove('hidden'); outputContainer.classList.add('hidden');
+
+            // 模擬 API 呼叫 (此處需填寫您的 API Key 進行實作)
+            setTimeout(() => {
+                output.innerHTML = `<strong class="text-amber-700">【MBR 專家診斷報告】</strong><br><br>根據您的場景，建議導入 MBR 300kg 載重型號並啟用「循線導航」。預估可降低 50% 步行疲勞，並符合政府 400 萬數位轉型補助申請資格。`;
+                outputContainer.classList.remove('hidden');
+                loading.classList.add('hidden');
+                btn.disabled = false;
+            }, 2000);
+        }
+
+        window.onload = function() {
+            const ctxRadar = document.getElementById('radarChart').getContext('2d');
+            radarChart = new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: ['人力荒壓', '職災風險', '搬運頻次', '動線複雜', '自動化需求'],
+                    datasets: [{ data: industryData.agriculture.radar, backgroundColor: 'rgba(245, 158, 11, 0.15)', borderColor: '#f59e0b', borderWidth: 4, pointBackgroundColor: '#f59e0b', pointRadius: 5 }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { r: { suggestedMin: 0, suggestedMax: 100, ticks: { display: false }, pointLabels: { font: { weight: 'bold', size: 12 } } } }, plugins: { legend: { display: false } } }
+            });
+
+            const ctxLine = document.getElementById('lineChart').getContext('2d');
+            new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: ['現狀', '半年', '12個月', '18個月', '24個月', '36個月'],
+                    datasets: [
+                        { label: '傳統人力累積成本', data: [100, 115, 135, 155, 180, 220], borderColor: '#94a3b8', borderDash: [5, 5], tension: 0.3 },
+                        { label: 'MBR 轉型總成本 (含補助)', data: [60, 35, 15, 10, 8, 5], borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.1)', fill: true, tension: 0.4 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { display: false }, x: { ticks: { color: '#94a3b8', font: { weight: 'bold' } } } }, plugins: { legend: { position: 'bottom', labels: { color: '#cbd5e1', font: { weight: 'bold' } } } } }
+            });
+            updateDashboard('agriculture');
+        };
+    </script>
+</body>
+</html>
